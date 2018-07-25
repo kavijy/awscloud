@@ -1,0 +1,72 @@
+
+In The below example we are creating a security group in "us-east-2" alloing the port 80 with cidr_ip 0.0.0.0/0
+
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+      - name: create a security group in us-east-2
+        ec2_group:
+          name: dmz
+          description: an example ec2 group
+          region: us-east-2
+          aws_access_key: "AKIAIWJUADQPQB16LCFI"
+          aws_secret_key: "NCMx885+nNU51sKuprQeZeVsU9arRZc7hAX7Itez"
+          rules:
+            - proto: tcp
+              from_port: 80
+              to_port: 80
+              cidr_ip: 0.0.0.0/0
+        register: security_group
+		
+		
+How to create an AWS EC2 Instance using Ansible
+
+
+- name: create ec2 instance
+        ec2:
+          aws_access_key: "AKIAIWJUADQPQB16LCFI"
+          aws_secret_key: "NCMx885+nNU51sKuprQeZeVsU9arRZc7hAX7Itez"
+          image: ami-caaf84af
+          wait: yes
+          instance_type: t2.micro
+          group_id: security_group.group_id
+          region: us-east-2
+          count_tag:
+            Name: apacheserver
+          exact_count: 1
+        register: ec2
+		
+How to launch an EC2 Instance with SSD Volume
+- name: create an EC2 instance with SSD volume type
+  ec2:
+    key_name: mykey
+    group: webserver
+    instance_type: c3.medium
+    image: ami-123456
+    wait: yes
+    wait_timeout: 500
+    volumes:
+      - device_name: /dev/xvda
+        volume_type: gp2  #insert the volume code here
+        volume_size: 8  #size is in GB
+    group_id: security_group.group_id
+    count_tag:
+      Name: apacheserver
+    exact_count: 1
+How to create a RDS dATABASE INSTANCE IN ANSIBLE
+
+- name: create RDS instance
+        rds:
+         command: create
+         region: us-east-2
+         instance_name: infinityppdatabase
+         db_engine: MySQL
+         size: 20 # determines the storage size in GB
+         instance_type: db.t2.micro
+         username: mysql_admin
+         password: 1nsecure
+         tags:
+           Environment: testing
+           Application: cms
+	
